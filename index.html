@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Н-банк — учебный проект мини-интернет-банка">
+  <meta name="author" content="AnaNaSiKni">
+  <title>Н-банк</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Шапка -->
+  <header class="header container">
+    <div class="header__inner">
+      <a class="logo" href="#top">
+        <svg viewBox="0 0 28 28" width="28" height="28" aria-hidden="true">
+          <defs><linearGradient id="logo-grad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7a5af8"/><stop offset="1" stop-color="#2a2178"/></linearGradient></defs>
+          <rect width="28" height="28" rx="8" fill="url(#logo-grad)"/>
+          <path d="M9 8v12M19 8v12M9 14h10" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+        <span>Н-банк</span>
+      </a>
+      <nav class="nav" aria-label="Основное меню">
+        <a href="#cards">Карты</a>
+        <a href="#operations">Операции</a>
+        <a href="#transfer">Переводы</a>
+        <a href="#deposits">Вклады</a>
+        <a href="#loans">Кредиты</a>
+        <a href="#cashback">Кэшбэк</a>
+      </nav>
+      <div class="header__right">
+        <button class="theme-btn" id="theme-toggle" type="button" aria-label="Сменить тему">Тема</button>
+        <span class="user">Анна Смирнова</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container" id="top">
+
+    <!-- Приветствие и баланс -->
+    <section class="hero">
+      <div class="hero__text">
+        <h1>Добрый день, Анна</h1>
+        <p class="hero__sub">Ваши финансы на сегодня</p>
+        <div class="status" id="status"></div>
+        <div class="timebox">
+          <button class="btn btn--ghost" type="button" id="skip-month">Пропустить месяц</button>
+          <span id="months-passed"></span>
+        </div>
+      </div>
+      <div class="balance">
+        <p class="balance__label">Всего на счетах</p>
+        <p class="balance__value" id="total-balance">0 ₽</p>
+        <div class="balance__stats">
+          <div>
+            <p class="stat__label">Доходы за 30 дней</p>
+            <p class="stat__value stat__value--plus" id="month-income">0 ₽</p>
+          </div>
+          <div>
+            <p class="stat__label">Расходы за 30 дней</p>
+            <p class="stat__value" id="month-expense">0 ₽</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Быстрые действия -->
+    <section class="quick" aria-label="Быстрые действия">
+      <a class="quick__item" href="#transfer">
+        <span class="quick__icon">↗</span>
+        <span>Перевести</span>
+      </a>
+      <a class="quick__item" href="#operations">
+        <span class="quick__icon">＋</span>
+        <span>Добавить операцию</span>
+      </a>
+      <a class="quick__item" href="#analytics">
+        <span class="quick__icon">◔</span>
+        <span>Траты по категориям</span>
+      </a>
+      <a class="quick__item" href="#cashback">
+        <span class="quick__icon">%</span>
+        <span>Кэшбэк</span>
+      </a>
+    </section>
+
+    <div class="layout">
+
+      <!-- Карты -->
+      <section class="panel" id="cards" aria-label="Мои карты">
+        <div class="panel__head">
+          <h2>Мои карты</h2>
+          <button class="btn btn--ghost" type="button" id="add-card-btn">Открыть карту</button>
+        </div>
+        <div class="cards__list" id="cards-list"></div>
+      </section>
+
+      <!-- Перевод между счетами -->
+      <section class="panel" id="transfer" aria-label="Перевод между счетами">
+        <div class="panel__head">
+          <h2>Перевод между счетами</h2>
+        </div>
+        <form class="form" id="transfer-form">
+          <label class="field">
+            <span>Откуда</span>
+            <select id="transfer-from" name="from"></select>
+          </label>
+          <label class="field">
+            <span>Куда</span>
+            <select id="transfer-to" name="to"></select>
+          </label>
+          <label class="field">
+            <span>Сумма, ₽</span>
+            <input type="number" id="transfer-amount" name="amount" min="1" step="1" placeholder="Например, 5000" required>
+          </label>
+          <p class="form__error" id="transfer-error" role="alert"></p>
+          <button class="btn" type="submit">Перевести</button>
+        </form>
+      </section>
+
+      <!-- Операции -->
+      <section class="panel panel--wide" id="operations" aria-label="Операции">
+        <div class="panel__head">
+          <h2>Операции</h2>
+          <div class="panel__tools">
+            <span class="panel__count" id="operations-count"></span>
+            <button class="btn btn--ghost" type="button" id="export-csv">Скачать CSV</button>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <input class="toolbar__search" type="search" id="search" placeholder="Поиск по названию" aria-label="Поиск по названию">
+          <select id="filter-category" aria-label="Категория">
+            <option value="all">Все категории</option>
+            <option value="Продукты">Продукты</option>
+            <option value="Транспорт">Транспорт</option>
+            <option value="Кафе">Кафе</option>
+            <option value="Развлечения">Развлечения</option>
+            <option value="Доход">Доход</option>
+            <option value="Кредит">Кредит</option>
+          </select>
+          <select id="sort" aria-label="Сортировка">
+            <option value="date-desc">Сначала новые</option>
+            <option value="date-asc">Сначала старые</option>
+            <option value="amount-desc">По сумме, больше</option>
+            <option value="amount-asc">По сумме, меньше</option>
+          </select>
+        </div>
+
+        <ul class="operations__list" id="operations-list"></ul>
+        <p class="empty" id="operations-empty" hidden>Ничего не найдено. Измените поиск или фильтр.</p>
+
+        <details class="add">
+          <summary>Добавить операцию</summary>
+          <form class="form form--row" id="add-form">
+            <label class="field">
+              <span>Название</span>
+              <input type="text" id="add-title" name="title" placeholder="Например, Аптека" required>
+            </label>
+            <label class="field">
+              <span>Категория</span>
+              <select id="add-category" name="category">
+                <option value="Продукты">Продукты</option>
+                <option value="Транспорт">Транспорт</option>
+                <option value="Кафе">Кафе</option>
+                <option value="Развлечения">Развлечения</option>
+                <option value="Доход">Доход</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Сумма, ₽ (знак выбирается по категории)</span>
+              <input type="number" id="add-amount" min="1" step="1" name="amount" placeholder="Например, 500" required>
+            </label>
+            <label class="field">
+              <span>Дата</span>
+              <input type="date" id="add-date" name="date" required>
+            </label>
+            <button class="btn" type="submit">Добавить</button>
+          </form>
+        </details>
+      </section>
+
+      <!-- Аналитика -->
+      <section class="panel" id="analytics" aria-label="Аналитика расходов">
+        <div class="panel__head">
+          <h2>Расходы по категориям</h2>
+        </div>
+        <div class="chart">
+          <!-- Сюда на этапе 4 подключается Chart.js -->
+          <canvas id="expense-chart" width="300" height="300" aria-label="Диаграмма расходов"></canvas>
+        </div>
+        <ul class="legend" id="chart-legend"></ul>
+      </section>
+
+      <!-- Цели -->
+      <section class="panel" id="goals" aria-label="Цели и копилки">
+        <div class="panel__head">
+          <h2>Цели</h2>
+          <span class="panel__count" id="goals-total"></span>
+        </div>
+        <label class="field goals__source">
+          <span>Списывать с карты</span>
+          <select id="goal-source"></select>
+        </label>
+        <ul class="goals" id="goals-list"></ul>
+        <details class="add">
+          <summary>Новая цель</summary>
+          <form class="form" id="goal-form">
+            <label class="field">
+              <span>Название</span>
+              <input type="text" id="goal-name" placeholder="Например, Ноутбук" required>
+            </label>
+            <label class="field">
+              <span>Сколько нужно накопить, ₽</span>
+              <input type="number" id="goal-target" min="1000" step="1000" placeholder="Например, 80000" required>
+            </label>
+            <button class="btn" type="submit">Создать цель</button>
+          </form>
+        </details>
+      </section>
+
+      <!-- Вклады -->
+      <section class="panel" id="deposits" aria-label="Вклады">
+        <div class="panel__head">
+          <h2>Вклады</h2>
+          <span class="panel__count" id="deposits-total"></span>
+        </div>
+        <ul class="products" id="deposits-list"></ul>
+        <details class="add">
+          <summary>Открыть вклад</summary>
+          <form class="form" id="deposit-form">
+            <label class="field">
+              <span>Сумма, ₽</span>
+              <input type="number" id="deposit-amount" min="10000" step="1000" placeholder="От 10 000 ₽" required>
+            </label>
+            <label class="field">
+              <span>Срок и ставка</span>
+              <select id="deposit-term"></select>
+            </label>
+            <label class="field">
+              <span>Списать с карты</span>
+              <select id="deposit-source"></select>
+            </label>
+            <p class="preview" id="deposit-preview"></p>
+            <button class="btn" type="submit">Открыть вклад</button>
+          </form>
+        </details>
+      </section>
+
+      <!-- Кредиты -->
+      <section class="panel" id="loans" aria-label="Кредиты">
+        <div class="panel__head">
+          <h2>Кредиты</h2>
+          <span class="panel__count" id="loans-total"></span>
+        </div>
+        <ul class="products" id="loans-list"></ul>
+        <details class="add">
+          <summary>Взять кредит</summary>
+          <form class="form" id="loan-form">
+            <label class="field">
+              <span>Сумма, ₽</span>
+              <input type="number" id="loan-amount" min="10000" step="1000" placeholder="От 10 000 ₽" required>
+            </label>
+            <label class="field">
+              <span>Срок</span>
+              <select id="loan-term"></select>
+            </label>
+            <p class="preview" id="loan-preview"></p>
+            <button class="btn" type="submit">Оформить кредит</button>
+          </form>
+        </details>
+      </section>
+
+      <!-- Здоровье -->
+      <section class="panel panel--wide" id="health" aria-label="Финансовое здоровье">
+        <div class="panel__head">
+          <h2>Н-здоровье</h2>
+        </div>
+        <div class="health">
+          <div class="health__score">
+            <strong id="health-score">0</strong>
+            <span>из 100</span>
+            <p id="health-verdict"></p>
+          </div>
+          <div class="health__body">
+            <ul class="health__parts" id="health-parts"></ul>
+            <p class="health__tip" id="health-tip"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Кэшбэк -->
+      <section class="panel panel--wide" id="cashback" aria-label="Калькулятор кэшбэка">
+        <div class="panel__head">
+          <h2>Калькулятор кэшбэка</h2>
+          <div class="panel__tools">
+            <button class="btn btn--ghost" type="button" id="cb-fill">Подставить мои траты</button>
+            <button class="btn btn--ghost" type="button" id="cb-best">Подобрать лучшие 3</button>
+          </div>
+        </div>
+        <p class="panel__hint" id="cb-hint"></p>
+        <div class="cb" id="cashback-list"></div>
+        <div class="cb-summary">
+          <div><span>За месяц</span><strong id="cashback-total">0 ₽</strong></div>
+          <div><span>За год</span><strong id="cashback-year">0 ₽</strong></div>
+          <div><span>Эффективная ставка</span><strong id="cashback-rate">0%</strong></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Подвал -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <p><strong>Н-банк</strong> — учебный проект. Все данные вымышленные, это не настоящий банк.</p>
+      <p class="footer__links">
+        <a href="#top">Наверх</a>
+        <a href="https://github.com/AnaNaSiKni" target="_blank" rel="noopener">GitHub: AnaNaSiKni</a>
+      </p>
+    </div>
+  </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/data.js"></script>
+  <script src="js/finance.js"></script>
+  <script src="js/render.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
